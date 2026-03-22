@@ -42,4 +42,6 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+.kubeconfig-ngrok
+
 
