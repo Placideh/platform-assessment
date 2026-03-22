@@ -27,6 +27,10 @@ jobs:
     defaults:
       run:
         working-directory: ./app
+    env:
+      APP_NAME: PLATFORM-APP
+      PORT: 3000
+      NODE_ENV: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
