@@ -5,7 +5,7 @@ import { EnvironmentVariables } from './dto/config.dto';
 @Global()
 @Injectable()
 export class EnvConfigService {
-  constructor(private configService: ConfigService<EnvironmentVariables>) { }
+  constructor(private configService: ConfigService<EnvironmentVariables>) {}
 
   get appEnvironment(): string {
     return this.configService.get<string>('NODE_ENV');
@@ -17,10 +17,6 @@ export class EnvConfigService {
 
   get applicationName(): string {
     return this.configService.get<string>('APP_NAME');
-  }
-
-  get applicationBaseUrl(): string {
-    return this.configService.get<string>('APP_BASE_URL');
   }
 
 }

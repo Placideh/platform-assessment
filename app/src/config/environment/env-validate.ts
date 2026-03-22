@@ -15,13 +15,14 @@ export const validateConfig = (
   });
 
   if (errors.length > 0) {
-    const errorMessages = errors.map(
-      error => `${error.property}: ${Object.values(error.constraints || {}).join(', ')}`
-    ).join('\n  ');
-    
-    throw new Error(
-      ` Environment validation failed: \n ${errorMessages}`
-    );
+    const errorMessages = errors
+      .map(
+        (error) =>
+          `${error.property}: ${Object.values(error.constraints || {}).join(', ')}`,
+      )
+      .join('\n  ');
+
+    throw new Error(` Environment validation failed: \n ${errorMessages}`);
   }
 
   return validatedConfig;
