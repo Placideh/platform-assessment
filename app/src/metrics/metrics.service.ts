@@ -26,8 +26,6 @@ export class MetricsService implements OnModuleInit {
       name: 'http_active_requests',
       help: 'Number of HTTP requests currently being processed',
     });
-
-    
   }
 
   onModuleInit(): void {
@@ -61,9 +59,9 @@ export class MetricsMiddleware implements NestMiddleware {
       this.metricsService.httpActiveRequests.dec();
     });
 
-     // Handle cases where the connection is closed before finishing
-     // we decrement thus to prevent the gauge from staying high
-     res.on('close', () => {
+    // Handle cases where the connection is closed before finishing
+    // we decrement thus to prevent the gauge from staying high
+    res.on('close', () => {
       if (!res.writableEnded) {
         this.metricsService.httpActiveRequests.dec();
       }
