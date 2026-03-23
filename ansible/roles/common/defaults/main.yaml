@@ -1,0 +1,9 @@
+---
+deploy_user: deploy
+timezone: Africa/Kigali
+ufw_allowed_ports:
+  - "22"
+  - "80"
+  - "443"
+  - "9100"
+nofile_limit: 65535

@@ -1,0 +1,12 @@
+---
+- name: Apply baseline hardening to all servers
+  hosts: all
+  become: true
+  roles:
+    - common
+
+- name: Configure monitoring agents
+  hosts: monitoring
+  become: true
+  roles:
+    - monitoring

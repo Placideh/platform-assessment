@@ -1,0 +1,16 @@
+all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    deploy_user: deploy
+    timezone: Africa/Kigali
+
+  children:
+    webservers:
+      hosts:
+        app-server-1:
+          ansible_host: "{{ lookup('env', 'ANSIBLE_TARGET_HOST') | default('127.0.0.1', true) }}"
+          ansible_port: "{{ lookup('env', 'ANSIBLE_TARGET_PORT') | default('2222', true) }}"
+
+    monitoring:
+      hosts:
+        app-server-1:
