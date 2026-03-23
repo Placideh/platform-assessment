@@ -42,6 +42,14 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
-.kubeconfig-ngrok
+# untrackgit rm -r --cached infra/cdk.out/ kubeconfig-ngork file
+.kubeconfig-ngrok.yaml
+
+# CDK
+infra/node_modules
+# untrack generated files from cdk synth
+infra/cdk.out/
+# track only file with template.sjon
+!infra/cdk.out/*.template.json
 
 
