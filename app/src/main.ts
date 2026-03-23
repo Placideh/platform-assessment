@@ -15,4 +15,4 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   logger.log(`Application: ${applicationName} running on port ${port}`);
 }
-bootstrap();
+void bootstrap();

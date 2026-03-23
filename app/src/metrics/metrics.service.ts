@@ -50,7 +50,7 @@ export class MetricsMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const labels = {
         method: req.method,
-        route: req.route?.path || req.path,
+        route: req.path,
         status_code: res.statusCode.toString(),
       };
       end(labels);

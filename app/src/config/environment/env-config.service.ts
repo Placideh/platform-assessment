@@ -18,5 +18,4 @@ export class EnvConfigService {
   get applicationName(): string {
     return this.configService.get<string>('APP_NAME');
   }
-
 }
