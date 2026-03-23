@@ -1,0 +1,929 @@
+{
+ "Resources": {
+  "PlatformVpc423616FE": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/Resource"
+   }
+  },
+  "PlatformVpcPublicSubnet1SubnetC0921B5D": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/Subnet"
+   }
+  },
+  "PlatformVpcPublicSubnet1RouteTable33B25D83": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/RouteTable"
+   }
+  },
+  "PlatformVpcPublicSubnet1RouteTableAssociationDED98CD0": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PlatformVpcPublicSubnet1RouteTable33B25D83"
+    },
+    "SubnetId": {
+     "Ref": "PlatformVpcPublicSubnet1SubnetC0921B5D"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "PlatformVpcPublicSubnet1DefaultRouteD965B32B": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "PlatformVpcIGW237ABAED"
+    },
+    "RouteTableId": {
+     "Ref": "PlatformVpcPublicSubnet1RouteTable33B25D83"
+    }
+   },
+   "DependsOn": [
+    "PlatformVpcVPCGW7B6F9C77"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "PlatformVpcPublicSubnet1EIP1FAC7724": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/EIP"
+   }
+  },
+  "PlatformVpcPublicSubnet1NATGatewayA4E133C3": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "PlatformVpcPublicSubnet1EIP1FAC7724",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "PlatformVpcPublicSubnet1SubnetC0921B5D"
+    },
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ]
+   },
+   "DependsOn": [
+    "PlatformVpcPublicSubnet1DefaultRouteD965B32B",
+    "PlatformVpcPublicSubnet1RouteTableAssociationDED98CD0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet1/NATGateway"
+   }
+  },
+  "PlatformVpcPublicSubnet2Subnet0CB3B183": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet2/Subnet"
+   }
+  },
+  "PlatformVpcPublicSubnet2RouteTableDBBBB5C7": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet2/RouteTable"
+   }
+  },
+  "PlatformVpcPublicSubnet2RouteTableAssociation756EF210": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PlatformVpcPublicSubnet2RouteTableDBBBB5C7"
+    },
+    "SubnetId": {
+     "Ref": "PlatformVpcPublicSubnet2Subnet0CB3B183"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "PlatformVpcPublicSubnet2DefaultRouteA630D8A1": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "PlatformVpcIGW237ABAED"
+    },
+    "RouteTableId": {
+     "Ref": "PlatformVpcPublicSubnet2RouteTableDBBBB5C7"
+    }
+   },
+   "DependsOn": [
+    "PlatformVpcVPCGW7B6F9C77"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "PlatformVpcPrivateSubnet1Subnet3F64AE2E": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.2.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/internal-elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet1/Subnet"
+   }
+  },
+  "PlatformVpcPrivateSubnet1RouteTable81311870": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/internal-elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet1/RouteTable"
+   }
+  },
+  "PlatformVpcPrivateSubnet1RouteTableAssociationAA56016D": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PlatformVpcPrivateSubnet1RouteTable81311870"
+    },
+    "SubnetId": {
+     "Ref": "PlatformVpcPrivateSubnet1Subnet3F64AE2E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet1/RouteTableAssociation"
+   }
+  },
+  "PlatformVpcPrivateSubnet1DefaultRoute763654FB": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PlatformVpcPublicSubnet1NATGatewayA4E133C3"
+    },
+    "RouteTableId": {
+     "Ref": "PlatformVpcPrivateSubnet1RouteTable81311870"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet1/DefaultRoute"
+   }
+  },
+  "PlatformVpcPrivateSubnet2SubnetA9378AEC": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.3.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/internal-elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet2/Subnet"
+   }
+  },
+  "PlatformVpcPrivateSubnet2RouteTable6104D779": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "kubernetes.io/role/internal-elb",
+      "Value": "1"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet2/RouteTable"
+   }
+  },
+  "PlatformVpcPrivateSubnet2RouteTableAssociationFDCDE038": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "PlatformVpcPrivateSubnet2RouteTable6104D779"
+    },
+    "SubnetId": {
+     "Ref": "PlatformVpcPrivateSubnet2SubnetA9378AEC"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet2/RouteTableAssociation"
+   }
+  },
+  "PlatformVpcPrivateSubnet2DefaultRouteC839D331": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "PlatformVpcPublicSubnet1NATGatewayA4E133C3"
+    },
+    "RouteTableId": {
+     "Ref": "PlatformVpcPrivateSubnet2RouteTable6104D779"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/PrivateSubnet2/DefaultRoute"
+   }
+  },
+  "PlatformVpcIGW237ABAED": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Name",
+      "Value": "NetworkStack/PlatformVpc"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/IGW"
+   }
+  },
+  "PlatformVpcVPCGW7B6F9C77": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "PlatformVpcIGW237ABAED"
+    },
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/PlatformVpc/VPCGW"
+   }
+  },
+  "EksClusterSg282AAFA5": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for EKS control plane",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/EksClusterSg/Resource"
+   }
+  },
+  "EksClusterSgfromNetworkStackEksNodeSg8AAF0D504432306FA1F": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Allow worker nodes to communicate with control plane",
+    "FromPort": 443,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "EksClusterSg282AAFA5",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "EksNodeSgE000550C",
+      "GroupId"
+     ]
+    },
+    "ToPort": 443
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/EksClusterSg/from NetworkStackEksNodeSg8AAF0D50:443"
+   }
+  },
+  "EksNodeSgE000550C": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for EKS worker nodes",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "10.0.0.0/16",
+      "Description": "Allow Node Exporter scraping from within VPC",
+      "FromPort": 9100,
+      "IpProtocol": "tcp",
+      "ToPort": 9100
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/EksNodeSg/Resource"
+   }
+  },
+  "EksNodeSgfromNetworkStackEksClusterSg29FBC600102565535F867295E": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Allow control plane to communicate with worker nodes",
+    "FromPort": 1025,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "EksNodeSgE000550C",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "EksClusterSg282AAFA5",
+      "GroupId"
+     ]
+    },
+    "ToPort": 65535
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/EksNodeSg/from NetworkStackEksClusterSg29FBC600:1025-65535"
+   }
+  },
+  "EksNodeSgfromNetworkStackEksNodeSg8AAF0D50ALLTRAFFICD5D40C9B": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "Allow inter-node communication",
+    "GroupId": {
+     "Fn::GetAtt": [
+      "EksNodeSgE000550C",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "-1",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "EksNodeSgE000550C",
+      "GroupId"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/EksNodeSg/from NetworkStackEksNodeSg8AAF0D50:ALL TRAFFIC"
+   }
+  },
+  "AppSg898BCA4E": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Security group for platform application",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "10.0.0.0/16",
+      "Description": "Allow application traffic from within VPC",
+      "FromPort": 3000,
+      "IpProtocol": "tcp",
+      "ToPort": 3000
+     },
+     {
+      "CidrIp": "10.0.0.0/16",
+      "Description": "Allow Prometheus scraping from within VPC",
+      "FromPort": 9090,
+      "IpProtocol": "tcp",
+      "ToPort": 9090
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ],
+    "VpcId": {
+     "Ref": "PlatformVpc423616FE"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/AppSg/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/32OQW7CQAxFz8J+MoURF0CoQtmUKKnYVs7gtobgicY2EULcvQpUZMfqfz99WS/4sFz6+QwGKeL+WHTU+mujEI8OBvnCGPx110e3/uZdtXaVtR3FxlpGHdnU6mSKn9B2OPGJrURSJFBK/ByP5b2sxvgA3YDiABdXZTqD4vS4ZMXM+Bw8TP6vlSrE3xOyugajZdLLJifr7w4vQck/GUVurkZJluNdZ2vam94cpz36g7ydQ/Bh4RezgxAV2VjphL5+5B+tpgRcOwEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "NetworkStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "VpcId": {
+   "Description": "VPC ID",
+   "Value": {
+    "Ref": "PlatformVpc423616FE"
+   },
+   "Export": {
+    "Name": "PlatformVpcId"
+   }
+  },
+  "PrivateSubnets": {
+   "Description": "Private subnet IDs",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      {
+       "Ref": "PlatformVpcPrivateSubnet1Subnet3F64AE2E"
+      },
+      ",",
+      {
+       "Ref": "PlatformVpcPrivateSubnet2SubnetA9378AEC"
+      }
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "PlatformPrivateSubnets"
+   }
+  },
+  "PublicSubnets": {
+   "Description": "Public subnet IDs",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      {
+       "Ref": "PlatformVpcPublicSubnet1SubnetC0921B5D"
+      },
+      ",",
+      {
+       "Ref": "PlatformVpcPublicSubnet2Subnet0CB3B183"
+      }
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "PlatformPublicSubnets"
+   }
+  },
+  "EksClusterSgId": {
+   "Description": "EKS cluster security group ID",
+   "Value": {
+    "Fn::GetAtt": [
+     "EksClusterSg282AAFA5",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "PlatformEksClusterSgId"
+   }
+  },
+  "EksNodeSgId": {
+   "Description": "EKS node security group ID",
+   "Value": {
+    "Fn::GetAtt": [
+     "EksNodeSgE000550C",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "PlatformEksNodeSgId"
+   }
+  },
+  "AppSgId": {
+   "Description": "Application security group ID",
+   "Value": {
+    "Fn::GetAtt": [
+     "AppSg898BCA4E",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "PlatformAppSgId"
+   }
+  },
+  "ExportsOutputRefPlatformVpcPrivateSubnet1Subnet3F64AE2E9A80B23F": {
+   "Value": {
+    "Ref": "PlatformVpcPrivateSubnet1Subnet3F64AE2E"
+   },
+   "Export": {
+    "Name": "NetworkStack:ExportsOutputRefPlatformVpcPrivateSubnet1Subnet3F64AE2E9A80B23F"
+   }
+  },
+  "ExportsOutputRefPlatformVpcPrivateSubnet2SubnetA9378AECF0A0BBE6": {
+   "Value": {
+    "Ref": "PlatformVpcPrivateSubnet2SubnetA9378AEC"
+   },
+   "Export": {
+    "Name": "NetworkStack:ExportsOutputRefPlatformVpcPrivateSubnet2SubnetA9378AECF0A0BBE6"
+   }
+  },
+  "ExportsOutputFnGetAttEksClusterSg282AAFA5GroupId431EB4DA": {
+   "Value": {
+    "Fn::GetAtt": [
+     "EksClusterSg282AAFA5",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "NetworkStack:ExportsOutputFnGetAttEksClusterSg282AAFA5GroupId431EB4DA"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

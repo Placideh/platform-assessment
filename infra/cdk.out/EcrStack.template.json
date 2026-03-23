@@ -1,0 +1,159 @@
+{
+ "Resources": {
+  "PlatformAppRepoE0138EC9": {
+   "Type": "AWS::ECR::Repository",
+   "Properties": {
+    "EmptyOnDelete": true,
+    "ImageScanningConfiguration": {
+     "ScanOnPush": true
+    },
+    "ImageTagMutability": "IMMUTABLE",
+    "LifecyclePolicy": {
+     "LifecyclePolicyText": "{\"rules\":[{\"rulePriority\":1,\"description\":\"Keep only the last 20 images\",\"selection\":{\"tagStatus\":\"any\",\"countType\":\"imageCountMoreThan\",\"countNumber\":20},\"action\":{\"type\":\"expire\"}}]}"
+    },
+    "RepositoryName": "platform-app",
+    "Tags": [
+     {
+      "Key": "Environment",
+      "Value": "production"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "cdk"
+     },
+     {
+      "Key": "Project",
+      "Value": "platform-app"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EcrStack/PlatformAppRepo/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzIx0TNQTCwv1k1OydbNyUzSqw4uSUzO1kksL45PTS7Sqw5KLcgvzizJL6rUcU7LQ/BqQVz/0pKC0pJanbz8lFS9rGL9MiMjPSNDPUPFrOLMTN2i0rySzNxUvSAIDQDWWSKUbgAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "EcrStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "RepositoryUri": {
+   "Description": "ECR repository URI",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      {
+       "Fn::Select": [
+        4,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::GetAtt": [
+            "PlatformAppRepoE0138EC9",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      ".dkr.ecr.",
+      {
+       "Fn::Select": [
+        3,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::GetAtt": [
+            "PlatformAppRepoE0138EC9",
+            "Arn"
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "PlatformAppRepoE0138EC9"
+      }
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "PlatformEcrUri"
+   }
+  },
+  "RepositoryArn": {
+   "Description": "ECR repository ARN",
+   "Value": {
+    "Fn::GetAtt": [
+     "PlatformAppRepoE0138EC9",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "PlatformEcrArn"
+   }
+  },
+  "ExportsOutputFnGetAttPlatformAppRepoE0138EC9Arn2CC414A5": {
+   "Value": {
+    "Fn::GetAtt": [
+     "PlatformAppRepoE0138EC9",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "EcrStack:ExportsOutputFnGetAttPlatformAppRepoE0138EC9Arn2CC414A5"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
