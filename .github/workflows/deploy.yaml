@@ -1,0 +1,57 @@
+# =================================================================
+# Platform App Deployment/Delivery Pipeline
+# =================================================================
+# a workflow that handles the deployment lifecycle:
+#   Deploy to local kind cluster
+#
+# this stage depends on the CI workflow. If fails, no deployment.
+#
+# Deployment reaches the local kind cluster via ngrok tunnel.
+# The KUBECONFIG_DATA secret contains a kubeconfig pointing to
+# the ngrok TCP tunnel URL.
+# =================================================================
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+env:
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/platform-app
+
+jobs:
+  deploy:
+    name: Deploy to Local Kubernetes via NGROK tunnel
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+
+      - name: Verify cluster connectivity
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f k8s/app/
+
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/platform-app \
+            app=${{ env.DOCKERHUB_REPO }}:${{ github.event.workflow_run.head_sha }}
+
+      - name: Wait for rollout
+        run: kubectl rollout status deployment/platform-app --timeout=120s
+
+      - name: Verify pods
+        run: |
+          kubectl get pods -l app=platform-app
+          kubectl get svc platform-app
