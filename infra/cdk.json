@@ -1,0 +1,17 @@
+{
+  "app": "npx ts-node bin/main.ts",
+  "context": {
+    "projectName": "platform-App",
+    "environment": "production",
+    "clusterName": "platform-cluster",
+    "vpcCidr": "10.0.0.0/16",
+    "ecrRepoName": "platform-app",
+    "nodeInstanceType": "t3.medium",
+    "nodeMinSize": 2,
+    "nodeMaxSize": 4,
+    "nodeDesiredSize": 2,
+    "appPort": 3000,
+    "prometheusPort": 9090,
+    "nodeExporterPort": 9100
+  }
+}
