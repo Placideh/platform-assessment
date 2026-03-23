@@ -1,0 +1,23 @@
+grafana:
+  adminPassword: prom-operator
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: "platform"
+          orgId: 1
+          folder: "Platform"
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/platform
+
+  dashboardsConfigMaps:
+    platform: platform-app-dashboard
+
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard

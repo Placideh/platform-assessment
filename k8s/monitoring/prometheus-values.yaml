@@ -1,0 +1,71 @@
+prometheus:
+  prometheusSpec:
+   
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+    additionalScrapeConfigs:
+      - job_name: "platform-app"
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - source_labels:
+              [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels:
+              [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels:
+              [
+                __address__,
+                __meta_kubernetes_pod_annotation_prometheus_io_port,
+              ]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+
+# Alert rules
+additionalPrometheusRulesMap:
+  platform-app-alerts:
+    groups:
+      - name: platform-app
+        rules:
+          - alert: PodNotReady
+            expr: kube_pod_status_ready{condition="true", pod=~"platform-app.*"} == 0
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod {{ $labels.pod }} not ready"
+              description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has been unready for more than 2 minutes."
+
+          - alert: HighErrorRate
+            expr: |
+              sum(rate(http_requests_total{status_code=~"5.."}[5m])) /
+              sum(rate(http_requests_total[5m])) > 0.05
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "High 5xx error rate on platform-app"
+              description: "More than 5% of requests are returning 5xx errors."
+
+          - alert: HighResponseLatency
+            expr: |
+              histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 1
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: "High p95 latency on platform-app"
+              description: "The 95th percentile response time is above 1 second."
