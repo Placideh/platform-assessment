@@ -1,16 +1,10 @@
 # =================================================================
-# Platform App CI/CD Pipeline
+# Platform App CI Pipeline
 # =================================================================
-# Single workflow that handles the full lifecycle:
-#   Test → Build → Push to DockerHub → Deploy to local kind cluster
-#
-# Each stage depends on the previous one. If tests fail, nothing
-#
-# Deployment reaches the local kind cluster via ngrok tunnel.
-# The KUBECONFIG_DATA secret contains a kubeconfig pointing to
-# the ngrok TCP tunnel URL.
+# Single workflow that handles the build lifecycle:
+#   Test → Build → Push to DockerHub 
 # =================================================================
-name: Platform App CI/CD
+name: CI
 
 on:
   push:
@@ -20,7 +14,6 @@ env:
   DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/platform-app
 
 jobs:
-  # Stage 1: Test,Runs e2e tests. If this fails, the pipeline stops.
   test:
     name: Lint & Test
     runs-on: ubuntu-latest
@@ -44,11 +37,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+      
+      - name: Run linter
+        run: npm run lint
 
       - name: Run e2e tests
         run: npm run test:e2e
-
-  # Stage 2: Build & Push
 
   build-and-push:
     name: Build & Push to DockerHub
@@ -79,52 +73,3 @@ jobs:
             ${{ env.DOCKERHUB_REPO }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  # =============================================================
-  # Stage 3: Deploy to Kubernetes
-  # Connects to the local via(NGROK tunner URL) kind cluster via ngrok tunnel and Deploy newly built image
-  # =============================================================
-  deploy:
-    name: Deploy to Kubernetes
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Decode the kubeconfig secret and configure kubectl
-      - name: Configure kubectl
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
-          echo "Kubeconfig configured"
-
-      # Verify the ngrok tunnel is reachable and cluster responds
-      - name: Verify cluster connectivity
-        run: |
-          echo "Connecting to cluster via ngrok tunnel..."
-          kubectl cluster-info
-          kubectl get nodes
-
-      # Apply all Kubernetes manifests (deployment, service, ingress)
-      - name: Apply Kubernetes manifests
-        run: kubectl apply -f k8s/app/
-
-      # Update the deployment to use the newly pushed image
-      - name: Update deployment image
-        run: |
-          kubectl set image deployment/platform-app \
-            app=${{ env.DOCKERHUB_REPO }}:${{ github.sha }}
-
-      # Wait for all replicas to be updated and healthy
-      - name: Wait for rollout
-        run: kubectl rollout status deployment/platform-app --timeout=120s
-
-      # Show running pods
-      - name: Verify pods are running
-        run: |
-          echo "=== Pod Status ==="
-          kubectl get pods -l app=platform-app
-          echo ""
-          echo "=== Service Status ==="
-          kubectl get svc platform-app
