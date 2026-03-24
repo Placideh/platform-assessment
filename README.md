@@ -53,8 +53,8 @@ platform-assessment/
 │   ├── ci.yaml                           ← Lint → Test → Build → Push to DockerHub
 │   └── deploy.yaml                       ← Deploy to K8s via ngrok
 ├── .docs/
-│   ├── grafana-dashboard.png           ← Grafana Platform App Overview
-│   ├── grafana-loki-logs                ← Platform App : Loki Logs 
+│   ├── grafana-dashboard.png             ← Grafana Platform App Overview
+│   ├── App-loki-logs                     ← Platform App : Loki Logs 
 ├── kind-config.yaml                      ← Kind cluster config (3 nodes, ingress-ready)
 └── README.md
 ```
@@ -308,8 +308,6 @@ Pre-provisioned dashboard with four panels: HTTP request rate by method/route, p
 
 - **Deploy to AWS** — Run `cdk deploy` to provision real infrastructure and observe the full CDK lifecycle (VPC, EKS, ECR) working end-to-end
 - **Helm chart for the app** — Replace raw K8s manifests with a Helm chart supporting multiple environments via values files
-
-- **Grafana Loki** — Add structured JSON logging with log aggregation alongside Prometheus metrics
 
 - **Secret management** — Integrate with AWS Secrets Manager or HashiCorp Vault instead of Kubernetes env vars and GitHub secrets
 - **Load testing** — Add Locust to validate performance under load and trigger alert rules
