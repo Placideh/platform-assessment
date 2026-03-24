@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { EnvConfigService } from './config/environment/env-config.service';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+
+  app.useLogger(app.get(Logger));
 
   const { port, applicationName } = app.get(EnvConfigService);
 
@@ -12,7 +14,7 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(port);
 
-  const logger = new Logger('Bootstrap');
+  const logger = app.get(Logger);
   logger.log(`Application: ${applicationName} running on port ${port}`);
 }
 void bootstrap();
