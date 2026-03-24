@@ -52,6 +52,9 @@ platform-assessment/
 ├── .github/workflows/
 │   ├── ci.yaml                           ← Lint → Test → Build → Push to DockerHub
 │   └── deploy.yaml                       ← Deploy to K8s via ngrok
+├── .docs/
+│   ├── grafana-dashboard.png           ← Grafana Platform App Overview
+│   ├── grafana-loki-logs                ← Platform App : Loki Logs 
 ├── kind-config.yaml                      ← Kind cluster config (3 nodes, ingress-ready)
 └── README.md
 ```
